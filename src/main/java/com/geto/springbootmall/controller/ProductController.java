@@ -25,11 +25,27 @@ public class ProductController {
 
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(
-            @RequestBody @Valid ProductRequest productRequest){
+            @RequestBody @Valid ProductRequest productRequest) {
         Integer productId = productService.createProduct(productRequest);
 
         Product product = productService.getProductById(productId);
 
         return ResponseEntity.status(201).body(product);
+    }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Integer productId,
+            @RequestBody @Valid ProductRequest productRequest) {
+        // check product exist
+        if (productService.getProductById(productId) == null) {
+            return ResponseEntity.status(404).build();
+        }
+        // update product
+        productService.updateProduct(productId, productRequest);
+
+        Product updateProduct = productService.getProductById(productId);
+
+        return ResponseEntity.status(200).body(updateProduct);
     }
 }
