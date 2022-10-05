@@ -1,6 +1,7 @@
 package com.geto.springbootmall.service.impl;
 
 import com.geto.springbootmall.dao.UserDao;
+import com.geto.springbootmall.dto.UserLoginRequest;
 import com.geto.springbootmall.dto.UserRegisterRequest;
 import com.geto.springbootmall.model.User;
 import com.geto.springbootmall.service.UserService;
@@ -21,8 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
-        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
         //check email exist
+        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
         if (user != null) {
             log.warn("This email: \"{}\" had been register", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -34,5 +35,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        //check email exist
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+        if (user == null) {
+            log.warn("This email: \"{}\" not exist", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("賬號或密碼不正確");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

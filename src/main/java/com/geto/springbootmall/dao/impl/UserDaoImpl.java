@@ -1,6 +1,7 @@
 package com.geto.springbootmall.dao.impl;
 
 import com.geto.springbootmall.dao.UserDao;
+import com.geto.springbootmall.dto.UserLoginRequest;
 import com.geto.springbootmall.dto.UserRegisterRequest;
 import com.geto.springbootmall.model.User;
 import com.geto.springbootmall.rowmapper.UserRowMapper;
