@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         // create user + Hash
-        String hashpwd = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
+        String hashpwd = DigestUtils.md5DigestAsHex((userRegisterRequest.getPassword() + "salt").getBytes());
         userRegisterRequest.setPassword(hashpwd);
         return userDao.createUser(userRegisterRequest);
     }
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         // check pwd
-        String hashpwd = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
+        String hashpwd = DigestUtils.md5DigestAsHex((userLoginRequest.getPassword() + "salt").getBytes());
         userLoginRequest.setPassword(hashpwd);
         if (user.getPassword().equals(userLoginRequest.getPassword())) {
             return user;
