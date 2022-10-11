@@ -26,14 +26,14 @@ public class OrderController {
     public ResponseEntity<Page<Order>> getOrders(
             @PathVariable Integer userId,
             @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer limit,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset
-//            @RequestParam(required = false) Integer orderId
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
+            @RequestParam(required = false) Integer orderId
     ) {
         OrderQueryParams orderQueryParams = new OrderQueryParams();
         orderQueryParams.setUserId(userId);
         orderQueryParams.setLimit(limit);
         orderQueryParams.setOffset(offset);
-//        orderQueryParams.setOrderId(orderId);
+        orderQueryParams.setOrderId(orderId);
 
         List<Order> orderList = orderService.getOrders(orderQueryParams);
         Integer count = orderService.countOrder(orderQueryParams);

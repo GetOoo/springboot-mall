@@ -4,7 +4,7 @@ public class OrderQueryParams {
     private Integer userId;
     private Integer limit;
     private Integer offset;
-//    private Integer orderId;
+    private Integer orderId;
 
     public Integer getUserId() {
         return userId;
@@ -30,11 +30,11 @@ public class OrderQueryParams {
         this.offset = offset;
     }
 
-//    public Integer getOrderId() {
-//        return orderId;
-//    }
-//
-//    public void setOrderId(Integer orderId) {
-//        this.orderId = orderId;
-//    }
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 }

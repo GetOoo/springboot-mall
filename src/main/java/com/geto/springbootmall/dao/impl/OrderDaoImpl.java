@@ -135,10 +135,10 @@ public class OrderDaoImpl implements OrderDao {
             sql += " AND user_id = :userId";
             map.put("userId", orderQueryParams.getUserId());
         }
-//        if (orderQueryParams.getOrderId() != null) {
-//            sql = sql + " AND order_id = :orderId";
-//            map.put("orderId", orderQueryParams.getOrderId());
-//        }
+        if (orderQueryParams.getOrderId() != null) {
+            sql = sql + " AND order_id = :orderId";
+            map.put("orderId", orderQueryParams.getOrderId());
+        }
         return sql;
     }
 
