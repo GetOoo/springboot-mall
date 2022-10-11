@@ -1,6 +1,7 @@
 package com.geto.springbootmall.dao.impl;
 
 import com.geto.springbootmall.dao.OrderDao;
+import com.geto.springbootmall.dto.OrderQueryParams;
 import com.geto.springbootmall.model.Order;
 import com.geto.springbootmall.model.OrderItem;
 import com.geto.springbootmall.rowmapper.OrderItemRowMapper;
@@ -22,6 +23,38 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date FROM `order` WHERE 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+        //查詢
+        sql = addFilteringSql(sql, map, orderQueryParams);
+        //排序
+        sql += " ORDER BY created_date DESC";
+        //分頁
+        sql += " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT count(*)  FROM `order` WHERE 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {
@@ -62,7 +95,7 @@ public class OrderDaoImpl implements OrderDao {
 
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
-        map.put("totalAmount",totalAmount);
+        map.put("totalAmount", totalAmount);
 
         Date now = new Date();
         map.put("createdDate", now);
@@ -84,16 +117,29 @@ public class OrderDaoImpl implements OrderDao {
 
         MapSqlParameterSource[] parameterSources = new MapSqlParameterSource[orderItemList.size()];
 
-        for (int i=0; i<orderItemList.size(); i++) {
+        for (int i = 0; i < orderItemList.size(); i++) {
             OrderItem orderItem = orderItemList.get(i);
 
             parameterSources[i] = new MapSqlParameterSource();
-            parameterSources[i].addValue("orderId",orderId);
-            parameterSources[i].addValue("productId",orderItem.getProductId());
-            parameterSources[i].addValue("quantity",orderItem.getQuantity());
-            parameterSources[i].addValue("amount",orderItem.getAmount());
+            parameterSources[i].addValue("orderId", orderId);
+            parameterSources[i].addValue("productId", orderItem.getProductId());
+            parameterSources[i].addValue("quantity", orderItem.getQuantity());
+            parameterSources[i].addValue("amount", orderItem.getAmount());
         }
 
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
     }
+
+    private String addFilteringSql(String sql, Map<String, Object> map, OrderQueryParams orderQueryParams) {
+        if (orderQueryParams.getUserId() != null) {
+            sql += " AND user_id = :userId";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+//        if (orderQueryParams.getOrderId() != null) {
+//            sql = sql + " AND order_id = :orderId";
+//            map.put("orderId", orderQueryParams.getOrderId());
+//        }
+        return sql;
+    }
+
 }
